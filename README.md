@@ -75,6 +75,146 @@ Still inherited as-is: every piece of
 sample content (people, companies, meetings, decks). Swapping those for legal
 content is the next step.
 
+## Horizon
+
+`src/horizon-impact.js` + `src/horizon-impact.css`, ported from the "Clavia
+Regulatory Impact" artifact. Horizon is back in the rail (it was hidden on 16 Oct).
+
+- `#horizon` has two tabs: **Watches** and **Assigned to me** (every open document
+  assigned to you, across every update, soonest due first; a row opens the document).
+- `#horizon`: the watches as cards (⋯ on a card: View, Edit Coverage, Delete
+  Watch with Undo) and **+ New Watch**.
+- `#horizon/watch/<id>`: a watch with its coverage, the weekly digest (Clavia's
+  read of the week: a headline, a cited paragraph and two counts; week by week, foldable) and its updates (Open · Completed · Archived). Clicking an update opens its page.
+- **Scope: what Clavia checked.** Setting up a watch asks nothing about documents: Clavia
+  chooses where to look (Intake requests, Templates, Playbooks and the Vault folders that fit the
+  watch; counts are this Clavia's real ones). On an update, "Our documents" ends with "Clavia
+  checked N documents in this watch's scope"; the link opens What Clavia checked: the places it
+  read, each with its count, and the places it did not, each with **Add**. Add reads that place
+  against the update at once (a line in Activity, a toast with Undo) and the watch keeps it.
+- `#horizon/HZ-231`: an update on one page, built like an Intake request: Clavia's
+  detail header (← the watch; at the right a priority pill that explains how
+  priority is set, ⋯, Ask Clavia), the serif title, one grey meta line (id ·
+  source · type · stage · jurisdiction · found; the source is a dotted link that opens the
+  publisher's page in a new tab, `SRC_URL` in horizon-impact.js), then Clavia's own AI Summary
+  (.rqp-ai: what changed, then Applies from · Why it matters · Our documents,
+  folding to its heading), then the documents. The header carries the priority pill and ⋯, which holds Ask Clavia, Save to Vault, Copy Link
+  and Archive. There is no email button anywhere in Horizon: Ask Clavia drafts one
+  ("Draft an email to the team about this" is a suggested question). Ask Clavia is a
+  chat docked on the left of the update, built from Clavia's own chat: thread
+  header, bubbles, .prose answers and the real composer; the update keeps the
+  right, narrowed to name, priority and next step, and the line between them
+  drags (double-click resets). Below 1180px the chat opens over the right
+  instead. Suggested questions are the ones this update raises; answers are
+  read from the update and its documents, each document named opens its panel;
+  ↗ in the chat's header takes the question to New Chat with the update
+  attached). Each document it touches has a priority, written as
+  the Do list writes one (High, Medium, Low: the word in its tone, worked out by
+  one stated rule, changeable for your own view), a stage, a next
+  step and an owner. A document opens on its own page (below).
+- **An update is team work, kept simple.** A lawyer makes one choice and fixes documents;
+  everything else follows.
+  - No decision step. An update is **Open**, **Completed** or **Archived**. The status pill only
+    shows it: Open while documents need fixing, Done when none is left open (Clavia moves
+    it, both ways). A new update is unread: its title is in 500 in the list, as unread
+    chats are in the rail, until someone opens it.
+  - **Archive** in ⋯ is the one way to say "not for us". It is for the whole team: the
+    update moves to Archived for everyone on the watch, with an optional reason, and shows
+    "Archived by …" under the meta line. If documents are still open, the dialog says they
+    leave everyone's lists with it. **Unarchive** in ⋯ brings it back as it was.
+  - Done follows the documents: when the last open document is done, Clavia moves the update to
+    Done; if one reopens, it goes back to Open. Both land in Activity.
+  - **No owner on the update.** People are assigned to documents only (Intake's
+    assignee control on each row and on the document's page).
+  - **Due dates are filled in**: two weeks before the law applies (the day itself when that is
+    under three weeks away). Change one from the date or ⋯.
+  - **Priority** sorts the list and shows in the header. It is a column in the list (Document ·
+    Finding · Priority · Due · Assigned to) and changes where it is seen: click it in the list
+    (the same quiet control as the due date) or the pill on the document's page.
+  - **A row's ⋯ has Intake's three, in Intake's words:** Open, Mark as Completed (Reopen once
+    completed) and, set apart, Delete: the document is taken off this update (not out of
+    Clavia), with a line in Activity and Undo. Assign, due date and priority change in their own cells.
+  - A document is **Open or Completed**: no Archive. **Mark as Completed** is one click. Clavia notes
+    what fixed it from where the document lives: a new version in the Intake request, the
+    template or playbook published as a new version, or "No change needed" for a compliant
+    one. It shows under the name in Done, in Activity, and on the document's Overview, where
+    **Change** picks another answer and adds a note.
+  - **Group by** and **Stage** appear only once an update touches more than 10 documents.
+  - Status and reason are kept in `clavia-ri-work` (`ups`).
+- A document's page also lists **Also in other updates**: the same document still open
+  in other updates, with priority and assignee. Clicking one opens it there.
+- An update is called by what changed, never by its number: "Data Act switching
+  charges", "UAE data transfers" (`SHORT` / `nameOf()` in horizon-impact.js). The
+  HZ number stays only in the address (`#horizon/HZ-231`), where links need it.
+- The work on an update, under its summary in two tabs, as an Intake request has:
+  - **Documents** (Open · Completed), listed as Document (with one grey line:
+    where it lives in Clavia · stage), Finding (Conflict, Gap or Compliant · the
+    clause), Priority, Due and Assigned to. The next step lives on the document's page.
+    Due is set on Clavia's own calendar (the month Intake's Due filter opens), right
+    under the date clicked: pick a day and it is set, Remove takes it off, Escape
+    closes; also from a row's ⋯ (Set Due Date), the bulk bar
+    (Set Due Date for every ticked document), a counterparty's ⋯ and the document's
+    page, beside who has it and its priority. Each change lands in Activity with Undo.
+    **Group by Counterparty** (beside Stage; remembered in `clavia-ri-group`) puts
+    one row per company over its documents: the counterparty as Intake records it
+    on the request, how many documents and where, how many need a change, the
+    highest priority, the soonest due date and who has them. A group folds, ticks
+    all its documents for the bulk bar, and its ⋯ has Assign all, Set Due Date for All
+    and Mark All as Completed. Templates and
+    playbooks sit last, under "Our own paper". Each document is assigned with
+    Intake's assignee control and picker; ⋯ on a row has Open, Mark as Completed
+    (or Reopen) and Delete. Tick documents (the box shows on hover) and the tabs
+    become a bar: N selected · Assign · Set Due Date · Mark as Completed · Reopen ·
+    Clear. Every change has Undo.
+  - **Activity**: everything that happened to the update, drawn as Intake draws a
+    request's: newest first by day on one thread down the faces, the same person
+    doing several things in a row said once, a status shown as its ring and name
+    (✓ Completed, ⊗ Archived), a person as their face, a priority in its colour, what
+    someone wrote under their name. Documents are named in the line, not linked,
+    as in Intake; several are listed quietly underneath. Add a comment sits on
+    top. Clavia's finding and check, assignments, status changes, priority
+    changes, emails, questions to Clavia, Save to Vault and comments all land
+    here. Kept in local storage under `clavia-ri-work`.
+- `#horizon/HZ-231/doc/<id>`: one document, opened as an Intake request opens.
+  Left is Horizon's: ← the update, status (Open · Completed) and ⋯, the
+  name, one meta line, who has it and its priority, Overview (the AI Summary for
+  this document: only what is wrong with it, its next step and due date; the law
+  is explained once, on the update, and the words are marked on the right; then
+  the other documents in the update), Activity (its lines,
+  with a comment box) and "Ask about …", which opens a Clavia chat. Right is the
+  document itself, from where it lives in Clavia, with the words Horizon found
+  highlighted (a CSS highlight, the text is not changed); nothing is printed
+  above the page. The document page has no "Other documents in this update" list
+  (← back is the list); it keeps "Also in other updates".
+  - a document in an Intake request opens in Intake's own viewer: Horizon calls
+    intakePage() for the request and puts its left pane in place of the
+    request's, so every option is Intake's (switch document, versions,
+    comments, Download, Open in Word, Close; Horizon takes out only its
+    Email with Outlook button);
+  - a template, a playbook or a Vault file opens in the same frame, read from
+    Templates, Playbooks or the Vault, with Open Template / Open Playbook /
+    Open in Vault, Download, Open in Word and Close.
+- Every document an update lists is one Clavia already holds, quoted in its own
+  words: for HZ-231, Trellis Health's order form (RQ-1042, clause 6.1, a 25%
+  termination fee), Acme's MSA v3 (RQ-1047, clause 5), Harbor Retail's DPA
+  (RQ-1043, clause 6), the MSA short-form template (Termination), the SaaS
+  playbook (Termination: no termination for convenience) and our notice to
+  Brightline (RQ-1045, where Lumen is the customer), and six Vault files read from their Vault
+  summaries: Acme's order form and DPA (Vault › Acme Corp — MSA negotiation), the signed Trellis,
+  Sentinel Health and Brightpath DPAs (Vault › Customer DPAs) and Brightline's Order #4 (Vault ›
+  Supplier agreements 2026). That makes 12 documents, so the update shows the view for more than
+  10: Group by (Counterparty) and Stage appear beside Open · Completed.
+- `#horizon/new`: a watch said in plain words (Improve, Set Up Manually), then
+  Create watch with jurisdiction and topic pickers, then the scan.
+
+Where Clavia already has the part, Horizon uses it: the detail header (.br-*),
+the AI Summary (.rqp-ai), the chat (.thread, .prose, .trace, .sugg, initComposer),
+menu(), pbToast and New Chat's attach (mxAsk). Otherwise it is self-contained: its own helpers and state in one closure, and every style
+under `.hzx`. Class names the rest of Clavia also styles are reverted first, so
+app styles never reach it. Your own view (archived updates, changed priorities)
+is kept in local storage under `clavia-ri-*`. `src/horizon.js` stays loaded
+for the Settings pages it provides (company profile, delivery).
+
 ## Playbooks
 
 `src/playbooks.js` + `src/playbooks.css`, data in `src/playbooks-data.js`

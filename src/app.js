@@ -65,8 +65,7 @@ const NAV = [
   { id: 'vault',     label: 'Vault',       icon: 'vault' },
   ...(SHOW_SKILLS ? [{ id: 'skills',    label: 'Skills',      icon: 'skills' }] : []),      // how we do a piece of work, written down once (skills.js); off for now
   { id: 'requests',  label: 'Contracts',   icon: 'requests' },   // the module once called Requests; ids and routes keep the old name
-  /* hidden for now (16 Oct); the view and #horizon still work */
-  // { id: 'horizon',   label: 'Horizon',     icon: 'routines' },   // legal's standing watch on the law (horizon.js)
+  { id: 'horizon',   label: 'Horizon',     icon: 'routines' },   // legal's standing watch on the law (horizon-impact.js)
   { id: 'projects',  label: 'Projects',    icon: 'projects' },
 ];
 
@@ -12905,7 +12904,7 @@ register('requests', requestsView);
 register('intake', intakeView);
 register('agents', () => agentsView());
 register('settings', settingsView);
-register('horizon', horizonView);
+register('horizon', () => hzxView());   // horizon-impact.js; horizon.js keeps Settings' profile and delivery pages
 register('projects', projectsView);
 
 
