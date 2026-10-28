@@ -472,7 +472,6 @@
    same frame); the words Horizon found are a highlight, so the text itself is never changed */
 ::highlight(hz-hit){background-color:#FBE7AE;color:inherit}
 .hzx .hz-docn{cursor:default}
-.hzx .hz-ver{cursor:default}
 .hzx .hz-open{height:30px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);font:inherit;font-size:12.5px;color:var(--text);cursor:pointer}
 .hzx .hz-open:hover{background:var(--tint)}
 .hzx .hz-nopv{color:var(--text-faint);font-style:italic}

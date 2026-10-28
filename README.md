@@ -140,6 +140,10 @@ Regulatory Impact" artifact. Horizon is back in the rail (it was hidden on 16 Oc
     one. It shows under the name in Done, in Activity, and on the document's Overview, where
     **Change** picks another answer and adds a note.
   - **Group by** and **Stage** appear only once an update touches more than 10 documents.
+  - **Horizon does not edit documents.** A document's AI Summary says what is wrong and the
+    Next step; the change is made where the document lives (Open in Intake, Open Template, Open
+    Playbook, Open in Vault), with that module's own editor and versions, and the document is
+    then marked as completed.
   - Status and reason are kept in `clavia-ri-work` (`ups`).
 - A document's page also lists **Also in other updates**: the same document still open
   in other updates, with priority and assignee. Clicking one opens it there.
@@ -186,14 +190,11 @@ Regulatory Impact" artifact. Horizon is back in the rail (it was hidden on 16 Oc
   highlighted (a CSS highlight, the text is not changed); nothing is printed
   above the page. The document page has no "Other documents in this update" list
   (← back is the list); it keeps "Also in other updates".
-  - a document in an Intake request opens in Intake's own viewer: Horizon calls
-    intakePage() for the request and puts its left pane in place of the
-    request's, so every option is Intake's (switch document, versions,
-    comments, Download, Open in Word, Close; Horizon takes out only its
-    Email with Outlook button);
-  - a template, a playbook or a Vault file opens in the same frame, read from
-    Templates, Playbooks or the Vault, with Open Template / Open Playbook /
-    Open in Vault, Download, Open in Word and Close.
+  - every document opens in Horizon's own simple reader, whatever it is: an Intake request's
+    document (its latest version), a template, a playbook or a Vault file. The bar has the way
+    to where it is edited (Open in Intake, Open Template, Open Playbook, Open in Vault),
+    Download, Open in Word and Close; no versions, compare or comments, which stay in Intake.
+    Horizon no longer draws Intake's request page or touches Intake's settings.
 - Every document an update lists is one Clavia already holds, quoted in its own
   words: for HZ-231, Trellis Health's order form (RQ-1042, clause 6.1, a 25%
   termination fee), Acme's MSA v3 (RQ-1047, clause 5), Harbor Retail's DPA
