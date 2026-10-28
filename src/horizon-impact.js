@@ -507,6 +507,15 @@ function docFrame(u, r, left) {
   return h('div', { class: 'rqp-host hz-doc' }, grid);
 }
 const VIEW_ICO = (p, n = 15) => `<svg width="${n}" height="${n}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+/* leaving for the place a document is edited: its back button returns here, to this document */
+function leave(view, id, run) {
+  const u = UPDATES.find(x => x.id === state.impact);
+  if (typeof MX !== 'undefined' && u) MX.back = { view, id, label: nameOf(u), hash: `horizon/${u.id}/doc/${state.docId}` };
+  run();
+  setTimeout(() => { if (MX.back) MX.back.to = location.hash; }, 0);   /* the page it was left for */
+}
+/* going anywhere else from there (the rail, a link) forgets the way back */
+addEventListener('hashchange', () => { if (typeof MX !== 'undefined' && MX.back?.to && location.hash !== MX.back.to) MX.back = null; });
 function docBlocks(r) {
   const ref = r.ref || {}, esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
   if (ref.kind === 'template') {
@@ -514,7 +523,7 @@ function docBlocks(r) {
     if (!t) return null;
     const fill = (txt) => esc(txt).replace(/\{\{(\w+)\}\}/g, (m, k) => `<span class="mx-chip">${esc(t.fields.find(f => f.key === k)?.hint || k)}</span>`);
     const v = (typeof MX_TPL_VER !== 'undefined' && MX_TPL_VER[t.id]) || 1;
-    return { title: t.name, ver: `v${v}`, open: ['Open Template', () => mxOpen('templates', t.id)],
+    return { title: t.name, ver: `v${v}`, open: ['Open Template', () => leave('templates', t.id, () => mxOpen('templates', t.id))],
       blocks: [{ t: 'h1', v: esc(t.name) }, { t: 'meta', v: `TEMPLATE · ${esc(t.kind.toUpperCase())} · V${v}` }, ...t.body.map(b => b.h ? { t: 'h2', v: esc(b.h) } : { t: 'p', v: fill(b.p) })] };
   }
   if (ref.kind === 'playbook') {
@@ -529,19 +538,19 @@ function docBlocks(r) {
       if (c.fallback) out.push({ t: 'p', v: `<b>Fallback.</b> ${esc(c.fallback)}` });
       if (c.walkaway) out.push({ t: 'p', v: `<b>Not acceptable.</b> ${esc(c.walkaway)}` });
     });
-    return { title: pb.name, ver: `v${pb.version}`, open: ['Open Playbook', () => { location.hash = 'playbooks/' + pb.id; }], blocks: out };
+    return { title: pb.name, ver: `v${pb.version}`, open: ['Open Playbook', () => leave('playbooks', pb.id, () => { location.hash = 'playbooks/' + pb.id; })], blocks: out };
   }
   if (ref.kind === 'request') {
     const R = typeof mxIntake === 'function' ? mxIntake().find(x => x.id === ref.id) : null;
     const d = R && typeof mxDocuments === 'function' ? (mxDocuments(R).find(x => x.id === (ref.doc || 'd1')) || mxDocuments(R)[0]) : null;
     const last = d?.versions?.[d.versions.length - 1];
     if (!last) return null;
-    return { title: (d.title || r.name).replace(/\.(docx|pdf)$/, ''), ver: null, open: ['Open in Intake', () => mxOpen('intake', R.id)], blocks: last.blocks };
+    return { title: (d.title || r.name).replace(/\.(docx|pdf)$/, ''), ver: null, open: ['Open in Intake', () => leave('intake', R.id, () => mxOpen('intake', R.id))], blocks: last.blocks };
   }
   if (ref.kind === 'vault') {
     const v = (typeof mxData === 'function' && mxData().vaults || []).find(x => x.id === ref.id), f = v?.files.find(x => x.name === ref.file);
     if (!f) return null;
-    return { title: f.name, ver: null, none: true, open: ['Open in Vault', () => mxOpen('vault', v.id)],
+    return { title: f.name, ver: null, none: true, open: ['Open in Vault', () => leave('vault', v.id, () => mxOpen('vault', v.id))],
       blocks: [{ t: 'h1', v: esc(f.name) }, { t: 'meta', v: `VAULT · ${esc(v.name.toUpperCase())} · ${esc(String(f.kind).toUpperCase())}${f.size ? ' · ' + esc(f.size).toUpperCase() : ''}` },
         { t: 'p', v: esc(f.summary || '') }, ...Object.entries(f.facts || {}).map(([k, x]) => ({ t: 'p', v: `<b>${esc(k)}.</b> ${esc(x)}` })),
         { t: 'p', v: '<span class="hz-nopv">There is no preview of this file in Clavia. Open it in the Vault to read it.</span>' }] };
@@ -1513,6 +1522,7 @@ function fromAddress(p) {
 }
 function scrollTop() { document.getElementById('view')?.scrollTo?.(0, 0); document.getElementById('main')?.scrollTo?.(0, 0); }
 window.hzxView = function hzxView() {
+  if (typeof MX !== 'undefined') MX.back = null;   /* back in Horizon, however: the way back is used up */
   fromAddress(typeof MX !== 'undefined' && MX.horizon ? MX.horizon.open : null);
   paint();
   /* what is showing may differ from what was asked (an unknown watch or update); the address

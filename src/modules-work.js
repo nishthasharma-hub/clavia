@@ -2784,8 +2784,8 @@ function intakePage(r, opts = {}) {
   const left = h('div', { class: 'rqp-left' }, h('div', { class: 'br-panes rqp-panes' }, docOpen),
     h('div', { class: 'rqp-left-in' },
       h('div', { class: 'br-top' },
-        embed ? h('span', {}) : h('button', { class: 'br-back', type: 'button', onclick: () => { mxClose('intake'); go('intake'); } },
-          h('span', { class: 'br-back-a', html: ICON('<path d="M19 12H5M11 6l-6 6 6 6"/>', 15) }), INTAKE_NAME),
+        embed ? h('span', {}) : ((bk) => h('button', { class: 'br-back', type: 'button', onclick: () => { mxClose('intake'); if (bk) mxGoBack(bk); else go('intake'); } },
+          h('span', { class: 'br-back-a', html: ICON('<path d="M19 12H5M11 6l-6 6 6 6"/>', 15) }), bk ? bk.label : INTAKE_NAME))(mxBackTo('intake', r.id)),
         h('div', { class: 'br-top-r' }, stageBtn, more)),
       title, meta, controls, tabs, body),
     dock);

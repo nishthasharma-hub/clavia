@@ -140,6 +140,13 @@ Regulatory Impact" artifact. Horizon is back in the rail (it was hidden on 16 Oc
     one. It shows under the name in Done, in Activity, and on the document's Overview, where
     **Change** picks another answer and adds a note.
   - **Group by** and **Stage** appear only once an update touches more than 10 documents.
+  - **Back to Horizon.** Opening a document where it is edited (Open in Intake, Open Template,
+    Open Playbook, Open in Vault) leaves a note (`MX.back`), so that page's own back button reads
+    "← <the update's name>" and returns to the document in Horizon, as a template drafted from a
+    request goes back to the request. The note is for that one page: going anywhere else, or
+    back into Horizon, forgets it. Shared helpers `mxBackTo()` / `mxGoBack()` sit beside
+    `mxOpen()` in modules.js; the back buttons in mxDetailPage (Vault), the template page, the
+    Intake request page and the playbook view read it. Opened any other way, they are unchanged.
   - **Horizon does not edit documents.** A document's AI Summary says what is wrong and the
     Next step; the change is made where the document lives (Open in Intake, Open Template, Open
     Playbook, Open in Vault), with that module's own editor and versions, and the document is

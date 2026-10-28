@@ -1661,10 +1661,10 @@ function pbRender(a) {
     /* opened from the list, the way out is back to it; beside a chat, the
        playbook keeps its mark and the panel's own close */
     lead: [state.view === 'playbooks'
-      ? h('button', { class: 'pbv-back', type: 'button', 'aria-label': 'Back to Playbooks', 'data-tip': 'Back to Playbooks',
+      ? ((bk) => h('button', { class: 'pbv-back', type: 'button', 'aria-label': bk ? `Back to ${bk.label}` : 'Back to Playbooks', 'data-tip': bk ? `Back to ${bk.label}` : 'Back to Playbooks',
           html: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" '
             + 'stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg>',
-          onclick: () => { closeArtifact?.(); if (state.view !== 'playbooks') go('playbooks'); } })
+          onclick: () => { closeArtifact?.(); if (bk) mxGoBack(bk); else if (state.view !== 'playbooks') go('playbooks'); } }))(typeof mxBackTo === 'function' ? mxBackTo('playbooks', pb.id) : null)
       : h('span', { class: 'pbv-kind', 'aria-hidden': 'true', html: kindMark('playbook') })],
     onClose: () => { PB.repaintList?.(); },
   };

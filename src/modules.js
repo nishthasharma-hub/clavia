@@ -55,6 +55,10 @@ function mxRoute(hash) {
 }
 function mxClose(view) { if (MX[view]) MX[view].open = null; }
 function mxOpen(view, id) { MX[view].open = id; go(view); }
+/* a page opened from somewhere else (Horizon) goes back there: the note names the page it was
+   opened for, so it holds for that page only, and it is used once */
+function mxBackTo(view, id) { const b = MX.back; return b && b.view === view && b.id === id ? b : null; }
+function mxGoBack(b) { MX.back = null; location.hash = b.hash; }
 
 /* a New Chat that starts with something already attached */
 function mxAsk(pills) { MX.pills = pills; go('home'); }
@@ -451,8 +455,8 @@ function mxDetailPage({ view, back, tile, item, key = 'name', placeholder, sub, 
     'aria-label': 'Description', oninput: (e) => { item.description = e.target.value; save(); } });
   if (about) about.value = item.description || '';
   const page = h('div', { class: 'pb mx mx-page' },
-    h('button', { class: 'mx-back', type: 'button', onclick: () => { mxClose(view); go(view); } },
-      h('span', { class: 'mx-back-ar', html: PB_SVG.chev }), back),
+    ((bk) => h('button', { class: 'mx-back', type: 'button', onclick: () => { mxClose(view); if (bk) mxGoBack(bk); else go(view); } },
+      h('span', { class: 'mx-back-ar', html: PB_SVG.chev }), bk ? bk.label : back))(mxBackTo(view, item.id)),
     h('header', { class: 'mx-head' },
       h('div', { class: 'mx-head-main' }, tile, title),
       h('div', { class: 'mx-head-acts' }, ...(actions || []))),
@@ -1251,8 +1255,8 @@ function templatePage(t, use = false) {
   const back = use
     ? h('button', { class: 'mx-back', type: 'button', onclick: () => from ? (MX.templates.open = null, mxOpen('intake', from.id)) : mxOpen('templates', t.id) },
         h('span', { class: 'mx-back-ar', html: PB_SVG.chev }), from ? from.id : t.name || 'Untitled template')
-    : h('button', { class: 'mx-back', type: 'button', onclick: () => { mxClose('templates'); go('templates'); } },
-        h('span', { class: 'mx-back-ar', html: PB_SVG.chev }), 'Templates');
+    : ((bk) => h('button', { class: 'mx-back', type: 'button', onclick: () => { mxClose('templates'); if (bk) mxGoBack(bk); else go('templates'); } },
+        h('span', { class: 'mx-back-ar', html: PB_SVG.chev }), bk ? bk.label : 'Templates'))(mxBackTo('templates', t.id));
   const word = h('button', { class: 'btn mx-word', type: 'button', onclick: toWord },
     h('img', { src: 'assets/brand/word.svg', alt: '', 'aria-hidden': 'true' }), 'Open in Word');
   const page = h('div', { class: 'mx-tpl' + (use ? ' is-use' : '') },
